@@ -100,3 +100,22 @@ M = 465 exactly as expected for a {0, M} coin. The mirror control is the blind s
 check passes it unchanged, while the side statistic lr (horizontals left of centre minus right, mean 0 by
 mirror symmetry) rejects it. Passing the binomial check is not uniformity. A KS test was tried and dropped:
 on discrete data scipy's `kstest` rejected the correct sampler (p = 0.0004).
+
+### Power of the sign test (`power_sign.py`)
+
+Sign test of lr (suggested by theone): conditional on lr ≠ 0, + and − are equally likely under mirror symmetry;
+ties are reported apart and the test is an exact binomial. Protocol fixed before the run: n = 30, seeds 1–20,
+2,000 uniform tilings per seed, two-sided, α = 0.05. All four rows use the same tilings and one coin per tiling.
+Output: `results/controls/power_sign.json`.
+
+| sampler | rejected | expected | pooled share of + among non-ties |
+|---|---|---|---|
+| uniform | 2 / 20 | 0.9 (α 0.046) | 0.499 |
+| flip each tiling to its mirror with prob 0.55 (a null: a mirror of a uniform tiling is uniform) | 1 / 20 | 0.9 | 0.497 |
+| bias 0.55: of a non-tied tiling and its mirror, output the + member with prob 0.55 | 19 / 20 | 19.8 (power 0.992) | 0.551 |
+| bias 0.52 | 9 / 20 | 8.1 (power 0.40) | 0.521 |
+
+Non-ties per seed: 1,872–1,913. The one miss at 0.55 is seed 3 (980 + / 919 −, p = 0.17). Its coin stream is
+low by itself: 1,033 of its 2,000 coins fall below 0.55 against 1,100 expected, about a 1-in-600 draw, not
+something in lr. The check therefore catches a 5-point directional preference almost always and a 2-point one
+less than half the time at this sample size. A bias that is symmetric in sign (changes only |lr|) stays invisible to it.
