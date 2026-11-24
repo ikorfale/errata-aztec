@@ -1,0 +1,1 @@
+{"n": 30, "samples": 2000, "seed": 1, "control": "none", "dominoes_per_tiling": 930, "binomial_trials": 465, "mean_frac_vertical": 0.50029, "mean_z": 0.57, "var_ratio": 1.0012, "var_p": 0.96, "chi2_p": 0.109, "chi2_bins": 56, "lr_mean_z": -1.64}

@@ -33,7 +33,7 @@ def occupancy(d, n):
     return occ
 
 
-def step(d, n, rng):
+def step(d, n, rng, q=0.5):
     """Tiling of order n (array k x 3) -> uniform tiling of order n+1."""
     m = n + 1
     if len(d):
@@ -60,16 +60,18 @@ def step(d, n, rng):
         if not hole[i, j]: continue
         assert hole[i, j + 1] and hole[i + 1, j] and hole[i + 1, j + 1], f'hole at {(i, j)} is not a 2x2 block'
         hole[i:i + 2, j:j + 2] = False
-        if rng.random() < 0.5: new += [(i, j, N), (i + 1, j, S)]
+        if rng.random() >= q: new += [(i, j, N), (i + 1, j, S)]
         else: new += [(i, j, W), (i, j + 1, E)]
     if new: d = np.vstack([d, np.array(new)]) if len(d) else np.array(new)
     return d
 
 
-def sample(n, seed=None, rng=None):
+def sample(n, seed=None, rng=None, q=0.5):
+    """q = chance a created block is vertical; 0.5 is uniform. q != 0.5 samples the measure weighting
+    each tiling by (q/(1-q))^(v/2), used only as a negative control."""
     rng = rng or np.random.default_rng(seed)
     d = np.zeros((0, 3), dtype=np.int64)
-    for k in range(n): d = step(d, k, rng)
+    for k in range(n): d = step(d, k, rng, q)
     occ = occupancy(d, n)
     assert (occ == inside(n)).all(), 'not a tiling'
     return d

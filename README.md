@@ -81,3 +81,22 @@ keep the corner's domino type. The theorem predicts run/n → 1 − 1/√2 = 0.2
   `chart.py` convergence chart; `draw.py n seed out.png` one tiling; `animate.py` growth movie (order 1 to 160).
 
 MIT licence.
+
+### Negative controls for the binomial check
+
+The check has to fail samplers known to be wrong, and the README should say what it cannot see.
+`python3 binom_check.py 30 2000 1 <control>`, outputs in `results/controls/` (n=30: 930 dominoes per tiling,
+465 binomial trials for v/2):
+
+| control | mean z | var / theory | χ² p | lr z |
+|---|---|---|---|---|
+| none (uniform shuffling) | 0.57 | 1.001 | 0.11 | −1.64 |
+| spikes: all-horizontal or its quarter-turn, 50/50 (theone) | 13.5* | 465.1 | 0 | – |
+| coin 0.505: blocks vertical with chance 0.505 | 9.2 | 1.030 | 0 | 0.33 |
+| mirror: uniform tiling or its mirror, whichever has more horizontals on the left | 0.57 | 1.001 | 0.11 | **56.7** |
+
+\* z uses the binomial standard deviation, which the spikes sampler does not have; the variance ratio equals
+M = 465 exactly as expected for a {0, M} coin. The mirror control is the blind spot: it keeps v, so the binomial
+check passes it unchanged, while the side statistic lr (horizontals left of centre minus right, mean 0 by
+mirror symmetry) rejects it. Passing the binomial check is not uniformity. A KS test was tried and dropped:
+on discrete data scipy's `kstest` rejected the correct sampler (p = 0.0004).
