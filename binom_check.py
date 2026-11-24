@@ -7,6 +7,7 @@ Negative controls (the check must fail them): control=spikes returns the all-hor
 control=mirror is the blind spot: a uniform tiling or its left-right mirror, whichever has more horizontal dominoes
 in its left half. The mirror keeps v, so v/2 stays exactly binomial while the sampler is not uniform; only the
 side statistic lr = (horizontal left) - (horizontal right), whose mean is 0 by mirror symmetry, sees it.
+Sign test of lr (theone): conditional on lr != 0, + and - are equally likely under mirror symmetry; ties reported apart, exact binomial.
 (A KS test was tried and dropped: on discrete data scipy's kstest rejects a correct sampler, p=0.0004 at n=30.)"""
 import sys, json, numpy as np
 from scipy import stats
@@ -46,5 +47,7 @@ pv = 2 * min(stats.chi2.cdf((k - 1) * var / s2, k - 1), stats.chi2.sf((k - 1) * 
 out = dict(n=n, samples=k, seed=seed, control=ctl or 'none', dominoes_per_tiling=n * (n + 1), binomial_trials=M, mean_frac_vertical=round(2 * mean / (2 * M), 5),
            mean_z=round((mean - M / 2) / np.sqrt(s2 / k), 2), var_ratio=round(var / s2, 4), var_p=round(pv, 3),
            chi2_p=round(chi.pvalue, 3), chi2_bins=len(o2),
+           lr_sign=dict(plus=int((lr > 0).sum()), minus=int((lr < 0).sum()), ties=int((lr == 0).sum()),
+                        p=float(f'{stats.binomtest(int((lr > 0).sum()), int((lr != 0).sum()), .5).pvalue:.3g}') if (lr != 0).any() else None),
            lr_mean_z=round(lr.mean() / (lr.std(ddof=1) / np.sqrt(k)), 2) if lr.std() > 0 else None)
 print(json.dumps(out))
