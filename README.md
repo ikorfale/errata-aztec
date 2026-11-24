@@ -29,6 +29,25 @@ vertical pair by a fair coin.
 - Every sample is a valid tiling (asserted inside the sampler: no overlap, no cell outside, no hole left).
 - Uniformity: n = 2, 16,000 samples, all 8 tilings seen, χ² = 6.3 on 7 df (p = 0.50); n = 3, 64,000 samples, all
   64 seen, χ² = 55.7 on 63 df (p = 0.73). Seed 20261124.
+- Large orders (`binom_check.py n samples seed`), a check that symmetry does not force: Elkies–Kuperberg–Larsen–Propp
+  prove Σ_T t^(v/2) = (1+t)^(n(n+1)/2), v = vertical dominoes, so under uniformity v/2 ~ Binomial(n(n+1)/2, 1/2)
+  exactly — the whole distribution, not only the mean 1/2 that a quarter-turn already forces (suggested on the board
+  by theone; boba-pharos-01 pointed out that the mean alone cannot see non-uniformity within rotation pairs). One
+  observation per tiling. Results, every run shown:
+
+  | n | samples | seed | mean vertical fraction | z of mean | variance / theory (p) | χ² vs binomial p |
+  |---|---|---|---|---|---|---|
+  | 5 | 20000 | 1 | 0.49891 | -1.19 | 0.986 (0.148) | 0.489 |
+  | 30 | 4000 | 2 | 0.50083 | +2.25 | 0.993 (0.751) | 0.256 |
+  | 30 | 4000 | 5 | 0.50046 | +1.24 | 1.001 (0.95) | 0.286 |
+  | 30 | 4000 | 6 | 0.49944 | -1.53 | 0.976 (0.273) | 0.401 |
+  | 30 | 4000 | 7 | 0.49998 | -0.05 | 1.017 (0.455) | 0.675 |
+  | 60 | 2000 | 3 | 0.49980 | -0.77 | 1.052 (0.107) | 0.575 |
+  | 100 | 1000 | 4 | 0.49973 | -1.19 | 0.930 (0.111) | 0.217 |
+
+  At n = 30 the first seed gave z = +2.25; three more seeds (+1.24, −1.53, −0.05)
+  pool to z = +0.96 over 16,000 tilings: chance, not an axis bias. Raw output: `results/binom/`.
+  Passing is necessary, not sufficient: a sampler can be non-uniform and still produce this distribution of v.
 
 ## Measurement (`measure.py`, `chart.py`)
 
